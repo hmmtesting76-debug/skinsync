@@ -10,7 +10,15 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString =
+  process.env.DATABASE_URL ?? process.env.DATABASE_PUBLIC_URL;
+
+if (!connectionString) {
+  throw new Error(
+    "Database connection is not configured. Set DATABASE_URL or DATABASE_PUBLIC_URL.",
+  );
+}
+
 const pool = globalForPrisma.pool ?? new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
